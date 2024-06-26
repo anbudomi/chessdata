@@ -68,7 +68,32 @@ def fetch_games():
         start_month = get_joined_month(joined_timestamp)
 
         while start_year <= end_year and start_month <= end_month:
-             
+            if start_month < 10:
+                url_games = url_games + start_year + '/0' + start_month
+            else:
+                url_games = url_games + start_year + '/' + start_month
+
+            response = requests.get(url_games, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
+            game_data = response.json()
+            game_data = game_data['games']
+
+            if not game_data == '[]':
+                for i in range (0, len(game_data)):
+                    player_white = game_data[i]['white']['username']
+
+                    if player_white == current_username:
+                        current_opponent = game_data[i]['black']['username']
+                    else:
+                        current_opponent = player_white
+
+                    if current_opponent not in usernames:
+                        queue.append(current_opponent)
+
+        if start_month < 12:
+            start_month = start_month + 1
+        else:
+            start_month = 1
+            start_year = start_year + 1
 
 
 
