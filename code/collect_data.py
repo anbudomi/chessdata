@@ -8,7 +8,7 @@ from datetime import datetime
 #chess.com api
 chess_com_api = 'https://api.chess.com/pub/player/'
 GamesString = 'games/'
-starting_username = 'hikaru'
+starting_username = 'Hikaru'
 #api is a string that will have to get modified for each players profile
 #to access games the api string will need to have the following format:
 #'https://api.chess.com/pub/player/games/yyyy/mm'
@@ -38,8 +38,6 @@ def test_fetch_games():
 
 def fetch_games():
     current_username = ''
-    
-    visited = set()
     queue = deque([starting_username])
     usernames = set()
 
@@ -53,32 +51,36 @@ def fetch_games():
 
         current_username = queue.popleft()
 
-        url_games = chess_com_api + current_username + 'games/'
+        url_games = chess_com_api + current_username + '/games/'
         url_profile = chess_com_api + current_username
 
-        if current_username in visited:
+        if current_username in usernames:
             continue
 
-        visited.add(current_username)
+        #visited.add(current_username)
         usernames.add(current_username)
 
         joined_timestamp = get_date_timestamp(url_profile)
 
-        start_year = get_joined_year(joined_timestamp)
-        start_month = get_joined_month(joined_timestamp)
+        start_year = int(get_joined_year(joined_timestamp))
+        start_month = int(get_joined_month(joined_timestamp))
 
         while start_year <= end_year and start_month <= end_month:
+             
             if start_month < 10:
-                url_games = url_games + start_year + '/0' + start_month
+                url_games_current_date = url_games + str(start_year) + '/0' + str(start_month)
             else:
-                url_games = url_games + start_year + '/' + start_month
+                url_games_current_date = url_games + str(start_year) + '/' + str(start_month)
 
-            response = requests.get(url_games, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
+            print(url_games_current_date)
+
+            response = requests.get(url_games_current_date, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
             game_data = response.json()
             game_data = game_data['games']
 
             if not game_data == '[]':
                 for i in range (0, len(game_data)):
+                    current_opponent = ''
                     player_white = game_data[i]['white']['username']
 
                     if player_white == current_username:
@@ -88,16 +90,14 @@ def fetch_games():
 
                     if current_opponent not in usernames:
                         queue.append(current_opponent)
-
+                    
+        print(start_month)
         if start_month < 12:
             start_month = start_month + 1
         else:
             start_month = 1
             start_year = start_year + 1
-
-
-
-             
+        print(start_month)
 
 def get_joined_month(timestamp):
     dt = datetime.utcfromtimestamp(timestamp)
@@ -115,5 +115,5 @@ def get_date_timestamp(url):
         temp_timestamp = int(temp_timestamp['joined'])
         return temp_timestamp
 
-test_fetch_games()
-#fetch_games()
+#test_fetch_games()
+fetch_games()
