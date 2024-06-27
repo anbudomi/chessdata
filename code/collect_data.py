@@ -45,13 +45,6 @@ def fetch_games():
 
     while queue:
 
-        start_year = 0
-        end_year = 2024
-
-        start_month = 0
-        end_month = 6
-
-        #current_username = queue.popleft()
         current_username = queue.pop()
 
         url_games = chess_com_api + current_username + '/games/'
@@ -60,7 +53,6 @@ def fetch_games():
         if current_username in usernames:
             continue
 
-        #visited.add(current_username)
         usernames.add(current_username)
 
         timestamp_data = requests.get(url_profile, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
@@ -74,7 +66,7 @@ def fetch_games():
         start_month = int(get_timestamp_month(joined_timestamp))
 
         end_year = int(get_timestamp_year(last_online_timestamp))
-        end_year = int(get_timestamp_year(last_online_timestamp))
+        end_month = int(get_timestamp_month(last_online_timestamp))
 
         while not start_year == end_year or start_month <= end_month:
              
