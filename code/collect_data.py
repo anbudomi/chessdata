@@ -13,29 +13,6 @@ starting_username = 'Hikaru'
 #to access games the api string will need to have the following format:
 #'https://api.chess.com/pub/player/games/yyyy/mm'
 
-
-#The following code is just for figuring out the chess.com API and playing around
-
-def test_fetch_games():
-    
-    #url = chess_com_api + 'hikaru/games/2023/10'
-    url = chess_com_api + 'hikaru/'
-    print(url)
-    
-    response = requests.get(url, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
-    print(response)
-
-    GameData = response.json()
-    #print(GameData['games'])
-    print(GameData['joined'])
-
-    #GameData = GameData['games']
-
-    #for i in range(0, len(GameData)):
-        #user = GameData[i]['white']['username']
-        #print(user)
-
-
 def fetch_games():
     current_username = ''
     queue = set()
@@ -60,7 +37,6 @@ def fetch_games():
 
         joined_timestamp = int(timestamp_data['joined'])
         last_online_timestamp = int(timestamp_data['last_online'])
-
 
         start_year = int(get_timestamp_year(joined_timestamp))
         start_month = int(get_timestamp_month(joined_timestamp))
@@ -113,5 +89,4 @@ def get_timestamp_year(timestamp):
     year = int(dt.strftime('%Y'))
     return year
 
-#test_fetch_games()
 fetch_games()
