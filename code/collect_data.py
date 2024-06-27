@@ -63,10 +63,18 @@ def fetch_games():
         #visited.add(current_username)
         usernames.add(current_username)
 
-        joined_timestamp = get_date_timestamp(url_profile)
+        timestamp_data = requests.get(url_profile, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
+        timestamp_data = timestamp_data.json()
 
-        start_year = int(get_joined_year(joined_timestamp))
-        start_month = int(get_joined_month(joined_timestamp))
+        joined_timestamp = int(timestamp_data['joined'])
+        last_online_timestamp = int(timestamp_data['last_online'])
+
+
+        start_year = int(get_timestamp_year(joined_timestamp))
+        start_month = int(get_timestamp_month(joined_timestamp))
+
+        end_year = int(get_timestamp_year(last_online_timestamp))
+        end_year = int(get_timestamp_year(last_online_timestamp))
 
         while not start_year == end_year or start_month <= end_month:
              
@@ -103,21 +111,15 @@ def fetch_games():
             print(len(queue))
 
 
-def get_joined_month(timestamp):
+def get_timestamp_month(timestamp):
     dt = datetime.utcfromtimestamp(timestamp)
     month = int(dt.strftime('%m'))
     return month
 
-def get_joined_year(timestamp):
+def get_timestamp_year(timestamp):
     dt = datetime.utcfromtimestamp(timestamp)
     year = int(dt.strftime('%Y'))
     return year
-
-def get_date_timestamp(url):
-        response = requests.get(url, headers = {'User-Agent': 'username: ChessMaid, email: domkeychess@gmail.com'})
-        temp_timestamp = response.json()
-        temp_timestamp = int(temp_timestamp['joined'])
-        return temp_timestamp
 
 #test_fetch_games()
 fetch_games()
