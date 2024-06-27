@@ -38,7 +38,9 @@ def test_fetch_games():
 
 def fetch_games():
     current_username = ''
-    queue = deque([starting_username])
+    queue = set()
+    queue.add(starting_username)
+    #queue = deque([starting_username])
     usernames = set()
 
     while queue:
@@ -49,7 +51,8 @@ def fetch_games():
         start_month = 0
         end_month = 6
 
-        current_username = queue.popleft()
+        #current_username = queue.popleft()
+        current_username = queue.pop()
 
         url_games = chess_com_api + current_username + '/games/'
         url_profile = chess_com_api + current_username
@@ -65,7 +68,7 @@ def fetch_games():
         start_year = int(get_joined_year(joined_timestamp))
         start_month = int(get_joined_month(joined_timestamp))
 
-        while start_year <= end_year and start_month <= end_month:
+        while not start_year == end_year or start_month <= end_month:
              
             if start_month < 10:
                 url_games_current_date = url_games + str(start_year) + '/0' + str(start_month)
@@ -88,16 +91,17 @@ def fetch_games():
                     else:
                         current_opponent = player_white
 
-                    if current_opponent not in usernames:
-                        queue.append(current_opponent)
+                    if current_opponent not in usernames and current_opponent not in queue:
+                        queue.add(current_opponent)
                     
-        print(start_month)
-        if start_month < 12:
-            start_month = start_month + 1
-        else:
-            start_month = 1
-            start_year = start_year + 1
-        print(start_month)
+            if start_month < 12:
+                start_month = start_month + 1
+            else:
+                start_month = 1
+                start_year = start_year + 1
+
+            print(len(queue))
+
 
 def get_joined_month(timestamp):
     dt = datetime.utcfromtimestamp(timestamp)
